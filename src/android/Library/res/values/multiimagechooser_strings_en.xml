@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="multi_app_name">图片选择器</string>
+    <string name="free_version_label">还可以选择 %d 张图片</string>
+    <string name="error_database">打开图像数据库时出错,请反馈问题.</string>
+    <string name="requesting_thumbnails">请求缩略图，请耐心等待</string>
+    <string name="multi_image_picker_processing_images_title">正在处理...</string>
+    <string name="multi_image_picker_processing_images_message">请稍等...</string>
+    <string name="discard" translatable="false">取消</string>
+    <string name="done" translatable="false">确定</string>
+ </resources>

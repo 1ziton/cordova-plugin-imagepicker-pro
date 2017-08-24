@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent"
+    android:orientation="vertical" > <!-- android:background="@drawable/image_bg" -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#488aff"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/iv_actionbar_left"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:background="@drawable/ic_left_light" />
+
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:id="@+id/tv_actionbar_title"
+            android:textColor="#ffffff"
+            android:layout_centerInParent="true"
+            android:layout_centerVertical="true"
+            android:text="相册"
+            android:textSize="18sp" />
+
+            <TextView
+                android:id="@+id/tv_actionbar_right"
+                android:textColor="#ffffff"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginRight="15dp"
+                android:layout_centerVertical="true"
+                android:layout_alignParentRight="true"
+                android:text="取消"
+                />
+
+    </RelativeLayout>
+
+
+    <GridView
+        android:id="@+id/gridview"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:columnWidth="0dip"
+        android:fadingEdgeLength="10dip"
+        android:fastScrollEnabled="true"
+        android:gravity="center"
+        android:horizontalSpacing="8dip"
+        android:numColumns="3"
+        android:requiresFadingEdge="vertical"
+        android:scrollingCache="true"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="8dip" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="#eeeeee"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tv_footerbar_left"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            android:layout_alignParentLeft="true"
+            android:text="预览"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_footerbar_right"
+            android:textColor="#ffffff"
+            android:layout_height="35dp"
+            android:layout_width="80dp"
+            android:gravity="center"
+            android:layout_marginRight="10dp"
+            android:background="#488aff"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:text="确定"
+            />
+
+    </RelativeLayout>    
+
+</LinearLayout>
