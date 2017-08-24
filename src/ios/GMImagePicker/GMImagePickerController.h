@@ -67,8 +67,23 @@ static CGSize const kPopoverContentSize = {480, 720};
 @property (nonatomic, assign) BOOL displayAlbumsNumberOfAssets;
 
 
+/*
+ 新增预览按钮
+ */
+@property (nonatomic, strong) UIButton *previewbtn;
+/*
+ 新增预览界面
+ 
+ */
+@property (nonatomic, strong)UIViewController *preVC;
+
+/*
+ 新增完成按钮
+ */
+@property (nonatomic, strong)UIButton *tocoMpletebtn;
+
 @property (nonatomic, assign) BOOL allow_video;
-@property (nonatomic, assign) NSInteger maximumImagesCount;
+
 /**
  *  Grid customizations:
  *
@@ -77,6 +92,9 @@ static CGSize const kPopoverContentSize = {480, 720};
  *  - minimumInteritemSpacing: Horizontal and vertical minimum space between grid cells (2.0 by default)
  */
 @property (nonatomic) NSInteger colsInPortrait;
+//选取图片最大张数
+@property (nonatomic) NSInteger maximumImagesCount;
+
 @property (nonatomic) NSInteger colsInLandscape;
 @property (nonatomic) double minimumInteritemSpacing;
 

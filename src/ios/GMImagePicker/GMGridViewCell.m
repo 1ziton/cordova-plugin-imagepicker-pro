@@ -111,7 +111,7 @@ static UIColor *disabledColor;
         _coverView = [[UIView alloc] initWithFrame:self.bounds];
         _coverView.translatesAutoresizingMaskIntoConstraints = NO;
         _coverView.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        _coverView.backgroundColor = [UIColor colorWithRed:0.24 green:0.47 blue:0.85 alpha:0.6];
+        _coverView.backgroundColor = [UIColor colorWithRed:0.24 green:0.47 blue:0.85 alpha:0.2];
         [self addSubview:_coverView];
         _coverView.hidden = YES;
         

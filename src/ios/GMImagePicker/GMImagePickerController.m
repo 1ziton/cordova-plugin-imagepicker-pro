@@ -8,9 +8,9 @@
 
 #import "GMImagePickerController.h"
 #import "GMAlbumsViewController.h"
+#import "GMFetchItem.h"
 
-
-@interface GMImagePickerController () <UINavigationControllerDelegate>
+@interface GMImagePickerController () <UINavigationControllerDelegate,UIScrollViewDelegate>
 
 @end
 
@@ -60,6 +60,10 @@
 
 - (void)viewDidLoad
 {
+       
+    _previewbtn = [[UIButton alloc]init];
+    _preVC = [[UIViewController alloc]init];
+    _tocoMpletebtn = [[UIButton alloc]init];
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
@@ -74,12 +78,15 @@
 
 - (void)setupNavigationController
 {
+    
     GMAlbumsViewController *albumsViewController = [[GMAlbumsViewController alloc] init:_allow_video];
     _navigationController = [[UINavigationController alloc] initWithRootViewController:albumsViewController];
     _navigationController.delegate = self;
+   
     
     [_navigationController willMoveToParentViewController:self];
     [_navigationController.view setFrame:self.view.frame];
+   
     [self.view addSubview:_navigationController.view];
     [self addChildViewController:_navigationController];
     [_navigationController didMoveToParentViewController:self];
@@ -98,7 +105,9 @@
 
 - (void)deselectAsset:(PHAsset *)asset
 {
-    [self.selectedAssets removeObjectAtIndex:[self.selectedAssets indexOfObject:asset]];
+    
+    
+[self.selectedAssets removeObjectAtIndex:[self.selectedAssets indexOfObject:asset]];
     if(self.selectedAssets.count == 0)
         [self updateDoneButton];
     
@@ -114,21 +123,135 @@
     [self.selectedFetches removeObjectAtIndex:[self.selectedFetches indexOfObject:fetch_item]];
 }
 
+
 - (void)updateDoneButton
 {
     UINavigationController *nav = (UINavigationController *)self.childViewControllers[0];
     for (UIViewController *viewController in nav.viewControllers)
-        viewController.navigationItem.rightBarButtonItem.enabled = (self.selectedAssets.count > 0);
+//        viewController.navigationItem.rightBarButtonItem.enabled = (self.selectedAssets.count > 0);
+    viewController.navigationItem.rightBarButtonItem.enabled = YES;
 }
 
 - (void)updateToolbar
 {
-    UINavigationController *nav = (UINavigationController *)self.childViewControllers[0];
+        UINavigationController *nav = (UINavigationController *)self.childViewControllers[0];
     for (UIViewController *viewController in nav.viewControllers)
     {
         [[viewController.toolbarItems objectAtIndex:1] setTitle:[self toolbarTitle]];
+        
+        
+     
+
         [viewController.navigationController setToolbarHidden:(self.selectedAssets.count == 0) animated:YES];
     }
+    
+
+    _previewbtn.frame =CGRectMake(0, self.view.frame.size.height-45, 100, 45);
+
+    
+    [_previewbtn setTitle:@"预览" forState:(UIControlStateNormal)];
+    [_previewbtn setTitleColor:[UIColor colorWithRed:63.0/255.0 green:159.0/255.0 blue:1.0 alpha:1.0] forState:(UIControlStateNormal)];
+     _previewbtn.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    _previewbtn.titleLabel.adjustsFontSizeToFitWidth = YES;
+    [_previewbtn.titleLabel setTextAlignment:(NSTextAlignmentLeft)];
+   
+    [_previewbtn addTarget:self action:@selector(previewEvent:) forControlEvents:(UIControlEventTouchUpInside)];
+        [_previewbtn setHidden:(self.selectedAssets.count == 0)];
+    NSLog(@"(self.selectedAssets.count == 0):%lu",(unsigned long)self.selectedAssets.count);
+    
+    [nav.view addSubview:_previewbtn];
+    
+    
+    _tocoMpletebtn.frame =CGRectMake(self.view.frame.size.width - 60, self.view.frame.size.height-45, 60, 45);
+    [_tocoMpletebtn setTitle:@"完成" forState:(UIControlStateNormal)];
+    [_tocoMpletebtn setTitleColor:[UIColor colorWithRed:63.0/255.0 green:159.0/255.0 blue:1.0 alpha:1.0] forState:(UIControlStateNormal)];
+    _tocoMpletebtn.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    _tocoMpletebtn.titleLabel.adjustsFontSizeToFitWidth = YES;
+    [_tocoMpletebtn.titleLabel setTextAlignment:(NSTextAlignmentLeft)];
+    
+    [_tocoMpletebtn addTarget:self action:@selector(finishPickingAssets:) forControlEvents:(UIControlEventTouchUpInside)];
+ 
+   [_tocoMpletebtn setHidden:(self.selectedAssets.count == 0)];
+    
+    [nav.view addSubview:_tocoMpletebtn];
+    
+    
+    
+
+}
+#pragma mark -preview
+- (void)previewEvent:(UIButton *)sender
+{
+    
+//    [sender removeFromSuperview];
+    [sender setHidden:YES];
+    
+    UIScrollView *previewScroll = [[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, self.view.frame.size.width, self.view.frame.size.height)];
+    int i=0;
+    for(GMFetchItem *item in self.selectedFetches){
+        UIImageView *iv = [[UIImageView alloc]initWithFrame:CGRectMake(i*self.view.frame.size.width + 2, 2, self.view.frame.size.width-4, self.view.frame.size.height-4)];
+        [iv setImage:[UIImage imageNamed:item.image_fullsize]];
+        [previewScroll addSubview:iv];
+        i++;
+        
+    }
+
+    
+    NSInteger icont = self.selectedFetches.count;
+    //设定可滚动范围
+    previewScroll.contentSize=CGSizeMake(icont*self.view.frame.size.width, self.view.frame.size.width);
+    //设定当前显示的偏移
+    previewScroll.contentOffset=CGPointMake(0, 0);
+    previewScroll.pagingEnabled=YES;//页效果（只一个一个了视图的显示）
+    previewScroll.bounces=YES;
+    previewScroll.delegate=self;
+    
+   
+   
+    _preVC.view.backgroundColor = [UIColor whiteColor];
+    _preVC.navigationItem.title = [NSString stringWithFormat:@"1/%lu",(unsigned long)self.selectedFetches.count];
+//    UIBarButtonItem *barBtn = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:(UIBarButtonSystemItemCompose) target:self action:@selector(back)];
+    UIButton *backbtn = [[UIButton alloc]initWithFrame:CGRectMake(0, 9, 20, 25)];
+    [backbtn setBackgroundImage:[UIImage imageNamed:@"imageback"] forState:(UIControlStateNormal)];
+   
+   
+  
+    [backbtn addTarget:self action:@selector(back) forControlEvents:(UIControlEventTouchUpInside)];
+    UIBarButtonItem *barBtn = [[UIBarButtonItem alloc]initWithCustomView:backbtn];
+    
+    _preVC.navigationItem.leftBarButtonItem = barBtn;
+    
+    
+    _preVC.navigationItem.rightBarButtonItem =
+    [[UIBarButtonItem alloc] initWithTitle:NSLocalizedStringFromTable(@"取消", @"GMImagePicker",@"Done")
+                                     style:UIBarButtonItemStyleDone
+                                    target:self
+                                    action:@selector(dismiss:)];
+    
+    //    self.navigationItem.rightBarButtonItem.enabled = (self.picker.selectedAssets.count > 0);
+    _preVC.navigationItem.rightBarButtonItem.enabled = YES;
+  
+    
+    [_preVC.view addSubview:previewScroll];
+    [self.navigationController pushViewController:_preVC animated:YES];
+//    [self.view addSubview:previewScroll];
+    
+}
+
+
+
+-(void)back{
+    [_previewbtn setHidden:NO];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+
+#pragma mark -Scroll Delegate
+-(void)scrollViewWillEndDragging:(UIScrollView *)scrollView withVelocity:(CGPoint)velocity targetContentOffset:(inout CGPoint *)targetContentOffset
+{
+    
+    NSInteger i =(int)targetContentOffset->x/self.view.frame.size.width;
+    _preVC.navigationItem.title = [NSString stringWithFormat:@"%lu/%lu",(long)i+1,(unsigned long)self.selectedFetches.count];
 }
 
 #pragma mark - User finish Actions
@@ -174,15 +297,15 @@
     
     if (nImages>0 && nVideos>0)
     {
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"picker.selection.multiple-items", @"GMImagePicker", @"%@ Items Selected" ), @(nImages+nVideos)];
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"选取多张图片", @"GMImagePicker", @"%@ Items Selected" ), @(nImages+nVideos)];
     }
     else if (nImages>1)
     {
-        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"picker.selection.multiple-photos", @"GMImagePicker", @"%@ Photos Selected"), @(nImages)];
+        return [NSString stringWithFormat:NSLocalizedStringFromTable(@"选取多张图片", @"GMImagePicker", @"%@ Photos Selected"), @(nImages)];
     }
     else if (nImages==1)
     {
-        return NSLocalizedStringFromTable(@"picker.selection.single-photo", @"GMImagePicker", @"1 Photo Selected" );
+        return NSLocalizedStringFromTable(@"选取单张图片", @"GMImagePicker", @"1 Photo Selected" );
     }
     else if (nVideos>1)
     {
