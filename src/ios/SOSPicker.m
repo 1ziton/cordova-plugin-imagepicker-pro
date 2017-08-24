@@ -56,12 +56,13 @@ typedef enum : NSUInteger {
 
     NSDictionary *options = [command.arguments objectAtIndex: 0];
 
+    NSLog(@"options:%@",options);
     self.outputType = [[options objectForKey:@"outputType"] integerValue];
     BOOL allow_video = [[options objectForKey:@"allow_video" ] boolValue ];
-    NSInteger maximumImagesCount = [[options objectForKey:@"maximumImagesCount"] integerValue];
     NSString * title = [options objectForKey:@"title"];
     NSString * message = [options objectForKey:@"message"];
-    BOOL disable_popover = [[options objectForKey:@"disable_popover" ] boolValue];
+	BOOL disable_popover = [[options objectForKey:@"disable_popover" ] boolValue];
+    NSInteger maximumImagesCount = [[options objectForKey:@"maximumImagesCount"] integerValue];
     if (message == (id)[NSNull null]) {
       message = nil;
     }
@@ -77,23 +78,24 @@ typedef enum : NSUInteger {
 {
     GMImagePickerController *picker = [[GMImagePickerController alloc] init:allow_video];
     picker.delegate = self;
-    picker.maximumImagesCount = maximumImagesCount;
     picker.title = title;
     picker.customNavigationBarPrompt = message;
     picker.colsInPortrait = 4;
     picker.colsInLandscape = 6;
     picker.minimumInteritemSpacing = 2.0;
+    picker.maximumImagesCount = maximumImagesCount;
 
-    if(!disable_popover) {
-        picker.modalPresentationStyle = UIModalPresentationPopover;
+	if(!disable_popover) {
+	    picker.modalPresentationStyle = UIModalPresentationPopover;
 
-        UIPopoverPresentationController *popPC = picker.popoverPresentationController;
-        popPC.permittedArrowDirections = UIPopoverArrowDirectionAny;
-        popPC.sourceView = picker.view;
-        //popPC.sourceRect = nil;
-    }
+	    UIPopoverPresentationController *popPC = picker.popoverPresentationController;
+	    popPC.permittedArrowDirections = UIPopoverArrowDirectionAny;
+	    popPC.sourceView = picker.view;
+	    //popPC.sourceRect = nil;
+	}
 
-    [self.viewController showViewController:picker sender:nil];
+    //[self.viewController showViewController:picker sender:nil];
+    [self.viewController presentViewController:picker animated:YES completion:nil];
 }
 
 
@@ -146,24 +148,30 @@ typedef enum : NSUInteger {
 
 - (void)imagePickerController:(UIImagePickerController *)picker didFinishPickingMediaWithInfo:(NSDictionary *)info
 {
+    NSLog(@"info:%@",info);
+    NSLog(@"UIImagePickerController: User finished picking assets");
     [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     NSLog(@"UIImagePickerController: User finished picking assets");
 }
 
 - (void)imagePickerControllerDidCancel:(UIImagePickerController *)picker
 {
-    [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
     NSLog(@"UIImagePickerController: User pressed cancel button");
+    [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 #pragma mark - GMImagePickerControllerDelegate
 
 - (void)assetsPickerController:(GMImagePickerController *)picker didFinishPickingAssets:(NSArray *)fetchArray
 {
+    
     [picker.presentingViewController dismissViewControllerAnimated:YES completion:nil];
 
-    NSLog(@"GMImagePicker: User finished picking assets. Number of selected items is: %lu", (unsigned long)fetchArray.count);
+    NSLog(@"GMImagePicker: User finished picking assets. Number of selected items is1: %lu", (unsigned long)fetchArray.count);
 
+    
+    
     NSMutableArray * result_all = [[NSMutableArray alloc] init];
     CGSize targetSize = CGSizeMake(self.width, self.height);
     NSFileManager* fileMgr = [[NSFileManager alloc] init];
@@ -229,7 +237,7 @@ typedef enum : NSUInteger {
         result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsArray:result_all];
     }
 
-    [self.viewController dismissViewControllerAnimated:YES completion:nil];
+    [self.viewController dismissViewControllerAnimated:NO completion:nil];
     [self.commandDelegate sendPluginResult:result callbackId:self.callbackId];
 
 }
@@ -237,7 +245,8 @@ typedef enum : NSUInteger {
 //Optional implementation:
 -(void)assetsPickerControllerDidCancel:(GMImagePickerController *)picker
 {
-    NSLog(@"GMImagePicker: User pressed cancel button");
+    
+    NSLog(@"GMImagePicker: User pressed cancel button11");
 }
 
 
