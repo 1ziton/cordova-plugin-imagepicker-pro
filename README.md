@@ -1,4 +1,7 @@
 # cordova-plugin-imagepicker-pro
+[![](https://img.shields.io/npm/v/cordova-plugin-imagepicker-pro.svg?style=flat-square)](https://www.npmjs.com/package/cordova-plugin-imagepicker-pro)
+[![](https://img.shields.io/npm/dt/cordova-plugin-imagepicker-pro.svg?maxAge=2592000%3Fstyle=flat-square)](https://www.npmjs.com/package/cordova-plugin-imagepicker-pro)
+
 Cordova Plugin For Multiple Image Selection - implemented for iOS and Android 4.0 and above.
 
 Based on [cordova-plugin-telerik-imagepicker](https://www.npmjs.com/package/cordova-plugin-telerik-imagepicker) extension.
