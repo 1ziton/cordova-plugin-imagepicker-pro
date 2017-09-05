@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-imagepicker-pro",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "cordova": {
     "id": "cordova-plugin-imagepicker-pro",
@@ -9,10 +9,14 @@
       "ios"
     ]
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/1ziton/cordova-plugin-imagepicker-pro.git"
+  },
   "keywords": [
     "ecosystem:cordova",
     "cordova-ios"
   ],
-  "author": "",
+  "author": ["yilei","liye","giscafer"],
   "license": "ISC"
 }

@@ -26,3 +26,9 @@ Based on [cordova-plugin-telerik-imagepicker](https://www.npmjs.com/package/cord
 
 @five-lei
 
+@giscafer
+
+## License
+
+[LICENSE](./LICENSE)
+
