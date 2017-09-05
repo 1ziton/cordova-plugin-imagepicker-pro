@@ -9,6 +9,7 @@
 #import "GMImagePickerController.h"
 #import "GMAlbumsViewController.h"
 #import "GMFetchItem.h"
+#import "GMGridViewCell.h"
 
 @interface GMImagePickerController () <UINavigationControllerDelegate,UIScrollViewDelegate>
 
@@ -54,20 +55,39 @@
 
 - (void)dealloc
 {
-    
+    NSLog(@"dealloc");
+    _selectedCell = nil;
 }
 
 
 - (void)viewDidLoad
 {
-       
+    NSNotificationCenter *notiCenter = [NSNotificationCenter defaultCenter];
+    [notiCenter addObserver:self selector:@selector(notificationEvent:) name:@"mycell" object:nil];
+    [notiCenter addObserver:self selector:@selector(cancleCellEvent:) name:@"cancleCell" object:nil];
+    _selectedCell = [[NSMutableArray alloc]init];
     _previewbtn = [[UIButton alloc]init];
     _preVC = [[UIViewController alloc]init];
     _tocoMpletebtn = [[UIButton alloc]init];
     [super viewDidLoad];
     // Do any additional setup after loading the view.
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+    NSLog(@"视图将要加载。。。");
+}
+-(void)cancleCellEvent:(NSNotification *)notification{
+   
+    _cancleSelectedCells = [[NSArray alloc]init];
+    _cancleSelectedCells = notification.object;
+}
 
+- (void)notificationEvent:(NSNotification *)notification{
+    _indexpath = [[NSIndexPath alloc]init];
+    _arr = [[NSArray alloc]init];
+    _arr = notification.object;
+
+}
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -96,23 +116,60 @@
 
 - (void)selectAsset:(PHAsset *)asset
 {
+    
+ 
+  
+    GMGridViewCell *mycell = (GMGridViewCell *)[_arr[0] cellForItemAtIndexPath:_arr[1]];
+
+    NSDictionary *dict = [[NSDictionary alloc]initWithObjectsAndKeys:mycell,_arr[1] ,nil];
+    [_selectedCell addObject:dict];
+    
+    [mycell.selectedButton setTitle:[NSString stringWithFormat:@"%ld",(unsigned long)self.selectedAssets.count + 1] forState:(UIControlStateNormal)];
     [self.selectedAssets insertObject:asset atIndex:self.selectedAssets.count];
     [self updateDoneButton];
     
     if(self.displaySelectionInfoToolbar)
         [self updateToolbar];
+    
 }
 
 - (void)deselectAsset:(PHAsset *)asset
 {
+   
     
     
+    GMGridViewCell *mycell = (GMGridViewCell *)[_cancleSelectedCells[0] cellForItemAtIndexPath:_cancleSelectedCells[1]];
+    
+    for(int i = 0;i<_selectedCell.count;i++)
+    {
+        NSDictionary *dict = _selectedCell[i];
+        
+        if(mycell == [dict objectForKey:dict.allKeys[0]])
+        {
+            [_selectedCell removeObjectAtIndex:i];
+            for (int j = 0;j<_selectedCell.count;j++)
+            {
+                NSDictionary *surplusDict = _selectedCell[j];
+                
+                
+                GMGridViewCell *surplusCell = (GMGridViewCell *)[_arr[0] cellForItemAtIndexPath:surplusDict.allKeys[0]];
+                [surplusCell.selectedButton setTitle:[NSString stringWithFormat:@"%ld",(unsigned long)j + 1] forState:(UIControlStateNormal)];
+               
+            
+            }
+         
+        }
+
+    }
+    
+
 [self.selectedAssets removeObjectAtIndex:[self.selectedAssets indexOfObject:asset]];
     if(self.selectedAssets.count == 0)
         [self updateDoneButton];
     
     if(self.displaySelectionInfoToolbar)
         [self updateToolbar];
+     
 }
 
 - (void)selectFetchItem:(GMFetchItem *)fetch_item{
@@ -228,19 +285,21 @@
                                     target:self
                                     action:@selector(dismiss:)];
     
-    //    self.navigationItem.rightBarButtonItem.enabled = (self.picker.selectedAssets.count > 0);
+   
     _preVC.navigationItem.rightBarButtonItem.enabled = YES;
   
     
     [_preVC.view addSubview:previewScroll];
     [self.navigationController pushViewController:_preVC animated:YES];
-//    [self.view addSubview:previewScroll];
+
     
 }
 
 
 
 -(void)back{
+    
+    
     [_previewbtn setHidden:NO];
     [self.navigationController popViewControllerAnimated:YES];
 }

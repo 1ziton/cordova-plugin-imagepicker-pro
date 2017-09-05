@@ -36,6 +36,8 @@ static UIColor *disabledColor;
     checkedIcon     = [UIImage imageNamed:@"CTAssetsPickerChecked"];
     selectedColor   = [UIColor colorWithWhite:1 alpha:0.3];
     disabledColor   = [UIColor colorWithWhite:1 alpha:0.9];
+    
+
 }
 
 - (void)awakeFromNib
@@ -56,6 +58,8 @@ static UIColor *disabledColor;
         CGFloat cellSize = self.contentView.bounds.size.width;
         
         // The image view
+        
+       
         _imageView = [UIImageView new];
         _imageView.frame = CGRectMake(0, 0, cellSize, cellSize);
         _imageView.contentMode = UIViewContentModeScaleAspectFill;
@@ -116,14 +120,20 @@ static UIColor *disabledColor;
         _coverView.hidden = YES;
         
         _selectedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        _selectedButton.frame = CGRectMake(2*self.bounds.size.width/3, 0*self.bounds.size.width/3, self.bounds.size.width/3, self.bounds.size.width/3);
+        _selectedButton.frame = CGRectMake(3*self.bounds.size.width/4, 0*self.bounds.size.width/3, self.bounds.size.width/4, self.bounds.size.width/4);
+        
         _selectedButton.contentMode = UIViewContentModeTopRight;
         _selectedButton.adjustsImageWhenHighlighted = NO;
         [_selectedButton setImage:nil forState:UIControlStateNormal];
         _selectedButton.translatesAutoresizingMaskIntoConstraints = NO;
         _selectedButton.autoresizingMask = UIViewAutoresizingFlexibleHeight | UIViewAutoresizingFlexibleWidth;
-        [_selectedButton setImage:[UIImage imageNamed:@"GMSelected"] forState:UIControlStateSelected];
-        _selectedButton.hidden = NO;
+//        [_selectedButton setImage:[UIImage imageNamed:@"GMSelected"] forState:UIControlStateSelected];
+//        _selectedButton.alpha = 0.5;
+        _selectedButton.layer.cornerRadius = self.bounds.size.width/8;
+        _selectedButton.backgroundColor = [UIColor colorWithRed:0/255.0 green:181/255.0 blue:29/255.0 alpha:1.0];
+        [_selectedButton setTitleColor:[UIColor whiteColor] forState:(UIControlStateNormal)];
+        [_selectedButton.titleLabel setAdjustsFontSizeToFitWidth:YES];
+        _selectedButton.hidden = YES;
         _selectedButton.userInteractionEnabled = NO;
         [self addSubview:_selectedButton];
         
@@ -200,10 +210,15 @@ static UIColor *disabledColor;
 // Override setSelected
 - (void)setSelected:(BOOL)selected
 {
+   
+   
     [super setSelected:selected];
     _coverView.hidden = !selected;
     _selectedButton.selected = selected;
+    _selectedButton.hidden = !selected;
+    
 }
+
 
 -(NSString*)getDurationWithFormat:(NSTimeInterval)duration
 {

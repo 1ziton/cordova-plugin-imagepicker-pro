@@ -139,6 +139,8 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
 {
     [super viewDidLoad];
     [self setupViews];
+   
+    
 //     UIBarButtonItem *barBtn = [[UIBarButtonItem alloc]initWithBarButtonSystemItem:(UIBarButtonSystemItemAdd) target:self action:@selector(back)];
 //    self.navigationItem.leftBarButtonItem = barBtn;
     
@@ -166,7 +168,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
 
 -(void)back{
    
- 
+    [self.picker.selectedCell removeAllObjects];
     [self.collectionView reloadData];
     [self.picker.previewbtn setHidden:YES];
    [self.picker.selectedAssets removeAllObjects];
@@ -221,6 +223,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
     for (GMGridViewCell *cell in [self.collectionView visibleCells])
     {
         NSInteger currentTag = cell.tag;
+        
         [self.imageManager requestImageForAsset:cell.asset
                                      targetSize:AssetGridThumbnailSize
                                     contentMode:PHImageContentModeAspectFill
@@ -359,6 +362,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
     }
     else
     {
+        
         cell.enabled = YES;
     }
     
@@ -469,8 +473,8 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
     if(!_picker.maximumImagesCount){
         _picker.maximumImagesCount = 1;
     }
-    NSLog(@"_maximumImagesCount:%ld",(long)_picker.maximumImagesCount);
-    NSLog(@"self.selectedAssets.count:%ld",(unsigned long)_picker.selectedAssets.count);
+//    NSLog(@"_maximumImagesCount:%ld",(long)_picker.maximumImagesCount);
+//    NSLog(@"self.selectedAssets.count:%ld",(unsigned long)_picker.selectedAssets.count);
     if(_picker.selectedAssets.count >=_picker.maximumImagesCount)
     {
         NSString *alertStr = [NSString stringWithFormat:@"你最多只能选择%ld张照片",(long)_picker.maximumImagesCount];
@@ -482,6 +486,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
         
         return NO;
     }
+   
     
     PHAsset *asset = self.assetsFetchResults[indexPath.item];
     //GMFetchItem * fetch_item = [dic_asset_fetches objectForKey:[ NSNumber numberWithLong:indexPath.item ]];
@@ -511,6 +516,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
             
             GMGridViewCell *cell = (GMGridViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
             
+            
             if ( cell ) {
                 [ cell set_progress:progress animated:false];
             }
@@ -531,6 +537,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
             //dispatch_async(dispatch_get_main_queue(), ^{
             
             GMGridViewCell *cell = (GMGridViewCell *)[collectionView cellForItemAtIndexPath:indexPath];
+           
             
             if ( cell ) {
                 [cell hide_progress];
@@ -562,7 +569,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
                 
                 UIImage *imageToDisplay = result.fixOrientation; //  UIImage+fixOrientation extension
                 
-          		NSLog(@"corrected orientation: %ld",(UIImageOrientation)imageToDisplay.imageOrientation);
+          		
 
                 // setting compression to a low value (high compression) impact performance, but not actual img quality
                 if ( ![ UIImageJPEGRepresentation(imageToDisplay, 0.2f ) writeToFile:filePath atomically:YES ] ) {
@@ -597,6 +604,8 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
         return NO;
     }
     
+  
+    
     if (!cell.isEnabled)
         return NO;
     else if ([self.picker.delegate respondsToSelector:@selector(assetsPickerController:shouldSelectAsset:)])
@@ -607,7 +616,12 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
 
 - (void)collectionView:(UICollectionView *)collectionView didSelectItemAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSLog(@"self.assetsFetchResults:%@",self.assetsFetchResults);
+    NSArray *arr = [NSArray arrayWithObjects:collectionView,indexPath,nil];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:@"mycell" object:arr];
+    
+    
+
     
     PHAsset *asset = self.assetsFetchResults[indexPath.item];
     //GMFetchItem * fetch_item = [dic_asset_fetches objectForKey:[ NSNumber numberWithLong:indexPath.item ]];
@@ -617,11 +631,19 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
     [self.picker selectFetchItem:fetch_item];
     
     if ([self.picker.delegate respondsToSelector:@selector(assetsPickerController:didSelectAsset:)])
+        
         [self.picker.delegate assetsPickerController:self.picker didSelectAsset:asset];
+    
 }
+
+
 
 - (BOOL)collectionView:(UICollectionView *)collectionView shouldDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+   
+    NSArray *arr = [NSArray arrayWithObjects:collectionView,indexPath,nil];
+    NSNotificationCenter *center = [NSNotificationCenter defaultCenter];
+    [center postNotificationName:@"cancleCell" object:arr];
     PHAsset *asset = self.assetsFetchResults[indexPath.item];
     
     if ([self.picker.delegate respondsToSelector:@selector(assetsPickerController:shouldDeselectAsset:)])
@@ -633,6 +655,8 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
 
 - (void)collectionView:(UICollectionView *)collectionView didDeselectItemAtIndexPath:(NSIndexPath *)indexPath
 {
+   
+
     PHAsset *asset = self.assetsFetchResults[indexPath.item];
     //GMFetchItem * fetch_item = [dic_asset_fetches objectForKey:[ NSNumber numberWithLong:indexPath.item ]];
     GMFetchItem * fetch_item = [dic_asset_fetches objectForKey:asset];
@@ -682,6 +706,7 @@ NSString * const GMGridViewCellIdentifier = @"GMGridViewCellIdentifier";
 
 
 #pragma mark - PHPhotoLibraryChangeObserver
+
 
 - (void)photoLibraryDidChange:(PHChange *)changeInstance
 {

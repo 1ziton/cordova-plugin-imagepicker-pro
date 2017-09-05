@@ -39,6 +39,16 @@ static CGSize const kPopoverContentSize = {480, 720};
  */
 @property (nonatomic, strong) NSMutableArray *selectedAssets;
 @property (nonatomic, strong) NSMutableArray *selectedFetches;
+@property (nonatomic, strong)NSIndexPath * indexpath;
+//mark: -- 通知传过来的数组
+
+@property (nonatomic,strong)NSArray *arr;
+
+//mark: -- 选中的cells
+@property (nonatomic,strong)NSMutableArray *selectedCell;
+//mark: --通知传过来的数组.取消选择
+
+@property (nonatomic,strong)NSArray *cancleSelectedCells;
 
 
 /** UI Customizations **/
