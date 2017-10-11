@@ -1,7 +1,7 @@
 {
   "name": "cordova-plugin-imagepicker-pro",
   "version": "1.0.2",
-  "description": "",
+  "description": "Cordova Plugin For Multiple Image Selection - implemented for iOS and Android 4.0 and above",
   "cordova": {
     "id": "cordova-plugin-imagepicker-pro",
     "platforms": [
